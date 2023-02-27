@@ -1,1 +1,1 @@
-# pilgrim.github.io
+# Blog
