@@ -2,6 +2,7 @@
 layout: page
 title: Survey
 permalink: /Survey/
+image: 08.jpg
 ---
 
 
