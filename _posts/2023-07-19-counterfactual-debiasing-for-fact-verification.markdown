@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  Counterfactual Debiasing for Fact Verification
-date:   2023-07-19 15:01:35 +0300
+date:   2023-07-19 11:01:35 +0300
 image:  02.jpg
 tags:   Style
 lang: zh
