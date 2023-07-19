@@ -3,7 +3,7 @@ layout: post
 title:  Counterfactual Debiasing for Fact Verification
 date:   2023-07-19 12:00:00 +0300
 image:  02.jpg
-tags:   Fact_Checking
+tags:   Style
 ---
 (转载) 本文介绍我们团队发表在**ACL2023上的基于反事实推理的虚假信息检测鲁棒性增强框架的工作: Counterfactual Debiasing for Fact Verification**。
 
