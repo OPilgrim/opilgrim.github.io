@@ -45,8 +45,12 @@ layout: default
   <div class="row">
     <!-- begin post -->
     <article class="post {{ no-image }} col col-8 col-t-10 col-m-12">
-
+      
+      {% if page.lang %}
+      <div class="post__content" lang="{{page.lang}}">
+      {% else %}
       <div class="post__content">
+      {% endif %}
         {{ content }}
       </div>
 

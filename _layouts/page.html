@@ -22,7 +22,11 @@ layout: default
 	<div class="row">
 		<!-- begin page -->
 		<article class="page col col-8 col-t-10 col-m-12">
+			{% if page.lang %}
+			<div class="page__content" lang="{{page.lang}}">
+			{% else %}
 			<div class="page__content">
+			{% endif %}
 				{{ content }}
 			</div>
 		</article>

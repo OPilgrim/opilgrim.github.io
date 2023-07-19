@@ -3,7 +3,11 @@ layout: default
 ---
 
 <div class="arhive-head">
+  {% if page.lang %}
+  <div class="container" lang="{{page.lang}}">
+  {% else %}
   <div class="container">
+  {% endif %}
     <h1 class="archive-title">Tag: <span>{{ page.tag }}</span></h1>
   </div>
 </div>
