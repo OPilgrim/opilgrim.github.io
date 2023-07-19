@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  (转载) ACL 2023: Counterfactual Debiasing for Fact Verification
+title:  (转载) ACL 2023 -- Counterfactual Debiasing for Fact Verification
 date:   2023-07-19 12:00:00 +0300
 image:  02.jpg
 tags:   Fact Checking
@@ -19,7 +19,7 @@ tags:   Fact Checking
 
 本节中，我们将详细介绍提出的鲁棒性增强框架CLEVER，其整体结构设计如图1所示。
 
-![]({{ site.baseurl }}/images/11.jpg)
+![图2 提出的框架CLEVER]({{ site.baseurl }}/images/11.jpg)
 *图2 提出的框架CLEVER*
 
 第一步是构建一个与事实验证任务标准设置不同的反事实场景。在我们的任务中（如图1上半部分所示），标准设置是输出受到因果图$\mathcal{G}_o$中同时包含言论和对应证据的影响。我们将言论$c$和证据${e_1, e_2, \ldots, e_n}$作为输入来模拟这种情况。表示为：
