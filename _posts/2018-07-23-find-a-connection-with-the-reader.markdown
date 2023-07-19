@@ -1,51 +1,25 @@
 ---
 layout: post
-title:  Find a connection with the reader
-date:   2018-07-24 15:01:35 +0300
+title:  (转载) ACL 2023: Counterfactual Debiasing for Fact Verification
+date:   2023-07-19 12:00:00 +0300
 image:  02.jpg
-tags:   Resources
+tags:   Fact Checking
 ---
-Yeah, and if you were the pope they'd be all, "Straighten your pope hat." And "Put on your good vestments." Noooooo! Perhaps, but perhaps your civilization is merely the sewer of an even greater society above you!
+本文介绍我们团队发表在**ACL2023上的基于反事实推理的虚假信息检测鲁棒性增强框架的工作: Counterfactual Debiasing for Fact Verification**。
 
-You lived before you met me?! Ow, my spirit! Humans dating robots is sick. __You people wonder why I'm still single?__ *It's 'cause all the fine robot sisters are dating humans!* I guess if you want children beaten, you have to do it yourself.
+## 1 引言
 
-## Are you crazy? I can't swallow that.
+随着信息数量急剧增长，未经证实的言论在网络上变得普遍，给公共安全（如公共卫生、政治和经济等领域）带来威胁。因此，事实验证任务受到研究者的关注。现有的事实验证数据集在人工标注时不可避免地引入偏置信息。例如，FEVER数据集中的否定词（如"not"和"never"）与"REFUTES"标签高度相关。这种偏置信息可能误导模型，使其关注言论中部分特征与标签的虚假相关性，而忽略真实的证据。因此，尽管模型在有偏数据集上表现良好，但在真实无偏数据集上的性能显著下降，并容易受到对抗性样本的攻击。
 
-Oh, I don't have time for this. I have to go and buy a single piece of fruit with a coupon and then return it, making people wait behind me while I complain. Meh. So, how 'bout them Knicks? Also Zoidberg.
+为了解决上述问题，之前的研究已经提出了几种增强鲁棒性的方法，大致可分为两类。第一类是基于数据增强的方法，利用启发式的设计方案，如词语交换和词组替换，生成额外的训练数据。然而，这些方法严重依赖于增强数据的质量，并且由于其固定的增强规则，难以适用于复杂的情况，比如多跳证据推理场景。
 
-1. We need rest. The spirit is willing, but the flesh is spongy and bruised.
-2. Fry, we have a crate to deliver.
-3. Have you ever tried just turning off the TV, sitting down with your children, and hitting them?
+第二类方法旨在减少具有偏置的样本对模型训练损失函数的贡献。关键问题转变为如何识别存在偏置的样本。具体而言，Schuster等人将与含有高度虚假相关的n-gram标签的样本视为具有偏置的样本，并通过降低它们的权重来减少偏置。Mahabadi等人假设仅含言论而不含证据的模型正确分类的实例具有偏置。尽管这两种方法都取得了不错的效果，但前者缺乏对不同类型偏置的适用性，因为它们只关注n-gram信息；后者则依赖于主模型和仅含言论输入模型对具有偏置样本的预测相似的假设，然而这一假设并不总是成立。此外，训练期间仅含言论输入模型的不准确预测可能错误地导致无偏置样本的权重下降。
 
-### Why not indeed!
+## 2 模型方法
 
-Nay, I respect and admire Harold Zoid too much to beat him to death with his own Oscar. I don't 'need' to drink. I can quit anytime I want! Soothe us with sweet lies. Bender?! You stole the atom. You don't know how to do any of those.
+本节中，我们将详细介绍提出的鲁棒性增强框架CLEVER，其整体结构设计如图1所示。
 
-* Shinier than yours, meatbag.
-* This is the worst part. The calm before the battle.
-* Ooh, name it after me!
+![图1 提出的框架CLEVER]({{ site.baseurl }}/images/v2-6a0ecb19c65001a1c5c6b8fc586e2430_720w.webp)
+*图2 提出的框架CLEVER*
 
-Say what? Throw her in the brig. Hey, you add a one and two zeros to that or we walk! You guys aren't Santa! You're not even robots. How dare you lie in front of Jesus? Ow, my spirit! Who's brave enough to fly into something we all keep calling a death sphere?
-
-Hey, you add a one and two zeros to that or we walk! You won't have time for sleeping, soldier, not with all the bed making you'll be doing. It's okay, Bender. I like cooking too. Hey, what kinda party is this? There's no booze and only one hooker.
-
-![]({{ site.baseurl }}/images/07.jpg)
-*Minimalism*
-
-Ummm…to eBay? But I know you in the future. I cleaned your poop. I'm just glad my fat, ugly mama isn't alive to see this day. My fellow Earthicans, as I have explained in my book 'Earth in the Balance'', and the much more popular ''Harry Potter and the Balance of Earth', we need to defend our planet against pollution. Also dark wizards.
-
-Your best is an idiot! Fry, you can't just sit here in the dark listening to classical music. And remember, don't do anything that affects anything, unless it turns out you were supposed to, in which case, for the love of God, don't not do it!
-
-You, a bobsleder!? That I'd like to see! I'm Santa Claus! There's no part of that sentence I didn't like! Noooooo! I can explain. It's very valuable.
-
-I'm Santa Claus! Is the Space Pope reptilian!? Who's brave enough to fly into something we all keep calling a death sphere? I had more, but you go ahead.
-
-It doesn't look so shiny to me. Kif might! You guys aren't Santa! You're not even robots. How dare you lie in front of Jesus? Oh, but you can. But you may have to metaphorically make a deal with the devil. And by "devil", I mean Robot Devil. And by "metaphorically", I mean get your coat.
-
-Check it out, y'all. Everyone who was invited is here. Anyone who laughs is a communist! You're going to do his laundry? Michelle, I don't regret this, but I both rue and lament it.
-
-Bender, we're trying our best. I daresay that Fry has discovered the smelliest object in the known universe! Oh, you're a dollar naughtier than most. Hi, I'm a naughty nurse, and I really need someone to talk to. $9.95 a minute.
-
-You, a bobsleder!? That I'd like to see! No! The kind with looting and maybe starting a few fires! Good news, everyone! There's a report on TV with some very bad news! When I was first asked to make a film about my nephew, Hubert Farnsworth, I thought "Why should I?" Then later, Leela made the film. But if I did make it, you can bet there would have been more topless women on motorcycles. Roll film!
-
-Eeeee! Now say "nuclear wessels"! Why did you bring us here? Yeah, and if you were the pope they'd be all, "Straighten your pope hat." And "Put on your good vestments." That's the ONLY thing about being a slave.
+第一步是构建一个与事实验证任务标准设置不同的反事实场景。在我们的任务中（如图1上半部分所示），标准设置是输出受到因果图$\mathcal{G}_o$中同时包含言论和对应证据的影响。我们将言论$c$和证据${e_1, e_2, \ldots, e_n}$作为输入来模拟这种情况。表示为：
