@@ -7,7 +7,7 @@ lang: zh
 ---
 (转载) 本文介绍我们团队发表在**ACL2023上的基于反事实推理的虚假信息检测鲁棒性增强框架的工作: Counterfactual Debiasing for Fact Verification**。
 
-![](../images/counterfactual_debiasing_for_fact_verification/0.jpg)
+![](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/0.jpg)
 
 ### 1 引言
 
@@ -21,13 +21,17 @@ lang: zh
 
 本节中，我们将详细介绍提出的鲁棒性增强框架CLEVER，其整体结构设计如图1所示。
 
-![](../images/counterfactual_debiasing_for_fact_verification/1.png)
+![](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/1.png)
 *图1 提出的框架CLEVER*
 
 第一步是构建一个与事实验证任务标准设置不同的反事实场景。在我们的任务中（如图1上半部分所示），标准设置是输出受到因果图$\mathcal{G}_o$中同时包含言论和对应证据的影响。我们将言论$c$和证据${e_1, e_2, ..., e_n}$作为输入来模拟这种情况。表示为：
-$$
-O_{c,e} = f_s(c, e_1, e_2, ..., e_n)
-$$
+
+\begin{equation}\label{1}
+
+\mathcal{O}_{c,e} = f_s(c, e_1, e_2, ..., e_n)
+
+\end{equation}
+
 接下来的关键问题是如何设计一个反事实场景来去除偏置。从因果关系的角度来看，如果我们希望评估一个变量对结果的影响，我们可以对该变量进行干预，同时保持其他变量不变。针对我们的目标，即获得受言论和证据共同影响的无偏预测结果，我们采取的干预方式是使言论-证据融合信息对事实验证模型不可见。换句话说，如图1下半部分所示，我们通过对原始因果图$\mathcal{G}_o$进行干预，构建一个反事实场景的因果图$\mathcal{G}_i$，其中从言论-证据融合信息节点到预测结果节点的边被切断。我们独立地训练另一个事实验证模型$f_{b}$，以模拟言论-证据信息不可见的情况，要求该模型仅基于言论生成预测结果$O_{c} \in \mathbb{R}^L$:
 $$
 O_c = f_b(c)
