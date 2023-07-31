@@ -40,15 +40,17 @@ lang: zh
 
 **定义**：$\mathcal{H}$ 是人类生成的文本的分布，$\mathcal{M}$是AI生成的文本的分布，$\Omega$是所有可能文本序列的集合；$TV(\mathcal{M}, \mathcal{H})$ 表示两种分布之间的总变异距离；$D:\Omega \to \mathbb{R}$ 是表示detector的function，将文本映射成分值，然后用阈值 $\gamma$ 来分类；通过调整 $\gamma$ 来调整检测器对文本的敏感程度，得到ROC曲线
 
-#### Theorem 1.
 
-任意检测器$D$的ROC曲线下的面积为：
 
-$AUROC(D) \leq \frac{1}2 + TV(\mathcal{M}, \mathcal{H}) - \frac{TV(\mathcal{M}, \mathcal{H})^2}2$
+**定理1**，任意检测器$D$的ROC曲线下的面积为：
+
+![image-20230731152350449](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230731152350449.png)
 
 证明：ROC是真阳性率(TPR)和假阳性率(FPR)之间的曲线图，其定义如下：
 
 ![image-20230731093354688](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230731093354688.png)
+
+> TPR，将机器生成文本判断为机器生成文本，真阳；FPR，将人类样本判断为机器生成文本，假阳
 
 其中 $\gamma$ 是某个分类器参数。我们可以通过$\mathcal{M}$和$\mathcal{H}$之间的总变化来限定$TPR_{\gamma}$和$FPR_{\gamma}$之间的差异：
 
@@ -68,7 +70,7 @@ $AUROC(D) \leq \frac{1}2 + TV(\mathcal{M}, \mathcal{H}) - \frac{TV(\mathcal{M}, 
 
 #### 3.1 Paraphrasing to Evade Detection
 
-<!--推论是由定理推断出来的-->
+> 推论是由定理推断出来的
 
 虽然我们的分析考虑了所有人类和一般语言模型生成的文本，但通过适当地定义$\mathcal{M}$和$\mathcal{H}$，它也可以应用于特定的场景，例如特定的写作风格或句子释义。例如，它可以用来证明人工智能生成的文本，即使带有水印，也可以通过简单地将其传递给释义工具而难以检测。考虑一个意译器，它将AI模型生成的序列作为输入，并产生具有类似含义的类似人类的序列。设$\mathcal{M}=\mathcal{R}_{\mathcal{M}}(s)$和$\mathcal{H}=\mathcal{R}_{\mathcal{H}}(s)$分别为释义器和人类产生的与$s$意义相近的序列的分布。释义器的目标是使其分布$\mathcal{R}_{\mathcal{M}}(s)$尽可能地与人类分布$\mathcal{R}_{\mathcal{H}}(s)$相似，从本质上减少它们之间的总变化距离。定理$1$为检测器$D$的性能设定了以下界限，检测器$D$试图从人类产生的序列中检测释义器的输出。
 
