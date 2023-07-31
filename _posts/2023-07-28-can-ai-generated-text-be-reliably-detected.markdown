@@ -32,6 +32,8 @@ lang: zh
 
 ### 3 Impossibility Results  for Reliable Detection of AI-Generated Text
 
+<!--这一节从各种角度证明AUROC是有界的，且不论什么条件下计算公式都是定理1，其实最根本还是想说明，只有在AI生成的样本和人的样本分布差异较大时，才能够检测出来，而现在AI生成内容的分布和人类越来越接近，检测器基本接近随机猜测，也就是会逐渐失效，所以至少我觉得有监督训练的黑盒方式就不要考虑了。不过TV的求解我还是不太理解？？-->
+
 **本节论点**：随着语言模型变得更加复杂，AI生成的和人类生成的文本序列分布之间的总变异距离会减少(见第4章)
 
 **本节内容**：提出理论证明，即使是最好的检测器的性能也会随着模型变得更大更强大而下降；即使两个分布之间有适度的重叠，检测性能对于实际部署来说也可能不够好，并可能导致高误报率。（所以不要依赖检测器）
@@ -74,7 +76,7 @@ lang: zh
 
 <!--推论是由定理推断出来的-->
 
-虽然我们的分析考虑了所有人类和一般语言模型生成的文本，但通过适当地定义$\mathcal{M}$和$\mathcal{H}$，它也可以应用于特定的场景，例如特定的写作风格或句子释义。例如，它可以用来证明人工智能生成的文本，即使带有水印，也可以通过简单地将其传递给释义工具而难以检测。考虑一个释义器，它将AI模型生成的序列作为输入，并产生具有类似含义的类人类的序列。设$\mathcal{M}=\mathcal{R}_{\mathcal{M}}(s)$和$\mathcal{H}=\mathcal{R}_{\mathcal{H}}(s)$分别为释义器和人类产生的与$s$意义相近的序列的分布。释义器的目标是使其分布$\mathcal{R}_{\mathcal{M}}(s)$尽可能地与人类分布$\mathcal{R}_{\mathcal{H}}(s)$相似，从本质上减少它们之间的总变化距离。**定理1**为检测器$D$的性能设定了以下界限，检测器$D$试图从人类产生的序列中检测释义器的输出。
+虽然我们的分析考虑了所有人类和一般语言模型生成的文本，但通过适当地定义$\mathcal{M}$和$\mathcal{H}$，它也可以应用于特定的场景，例如特定的写作风格或句子释义。例如，它可以用来证明人工智能生成的文本，即使带有水印，也可以通过简单地将其传递给释义工具而难以检测。考虑一个释义器，它将AI模型生成的序列作为输入，并产生具有类似含义的类人类的序列。设$\mathcal{M=R_M}(s)$和$\mathcal{H=R_H}(s)$分别为释义器和人类产生的与$s$意义相近的序列的分布。释义器的目标是使其分布$\mathcal{R_M}(s)$尽可能地与人类分布$\mathcal{R_H}(s)$相似，从本质上减少它们之间的总变化距离。**定理1**为检测器$D$的性能设定了以下界限，检测器$D$试图从人类产生的序列中检测释义器的输出。
 
 **推论1**，检测器$D$的ROC下的面积为：
 
@@ -86,9 +88,9 @@ lang: zh
 
 ![image-20230731101142582](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230731101142582.png)
 
-其中$\mathcal{R}_{\mathcal{M}}(s)$和$\mathcal{R}_{\mathcal{H}}(s)$分别是由释义模型和人类产生的$s$的复述序列的分布。
+其中$\mathcal{R_M}(s)$和$\mathcal{R_H}(s)$分别是由释义模型和人类产生的$s$的复述序列的分布。
 
-人类可能有不同的写作风格。**推论2**表明，如果复述模型类似于某些人类文本分布$\mathcal{H}$(即$TV(\mathcal{R}_{\mathcal{M}}(s), \mathcal{R}_{\mathcal{H}}(s))$较小)，则某些人的写作将被错误地检测为水印(即$Pr_{s_w} \thicksim \mathcal{R}_{\mathcal{H}}(s) [s_w使用W进行水印]$的值高)，或者复述模型可以去除水印(即$Pr_{s_w} \thicksim \mathcal{R}_{\mathcal{M}}(s) [s_w使用W进行水印]$的值低)。
+人类可能有不同的写作风格。**推论2**表明，如果复述模型类似于某些人类文本分布$\mathcal{H}$(即$TV(\mathcal{R_M}(s), \mathcal{R_H}(s))$较小)，则某些人的写作将被错误地检测为水印(即$Pr_{s_w} \thicksim \mathcal{R_H}(s) [s_w使用W进行水印]$的值高)，或者复述模型可以去除水印(即$Pr_{s_w} \thicksim \mathcal{R_M}(s) [s_w使用W进行水印]$的值低)。
 
 **推论3**，对于任意 AI文本检测器$D$，
 
@@ -96,7 +98,7 @@ lang: zh
 
 其中$\mathcal{M}$和$\mathcal{H}$分别表示模型和人类的文本分布。
 
-**推论3**表明，如果一个模型类似于某些人类文本分布$\mathcal{H}$(即$TV(\mathcal{M}, \mathcal{H})$很小)，那么某些人的写作将被错误地检测为人工智能生成的文本(即$Pr_{s \thicksim \mathcal{H}}[s被D检测为人工智能文本]$很高)，或者人工智能生成的文本将无法被可靠地检测出来(即$Pr_{s \thicksim \mathcal{M}}[s被D检测为人工智能文本]$很低)。
+**推论3**表明，如果一个模型类似于某些人类文本分布$\mathcal{H}$(即$TV(\mathcal{M, H})$很小)，那么某些人的写作将被错误地检测为人工智能生成的文本(即$Pr_{s \thicksim \mathcal{H}}[s被D检测为人工智能文本]$很高)，或者人工智能生成的文本将无法被可靠地检测出来(即$Pr_{s \thicksim \mathcal{M}}[s被D检测为人工智能文本]$很低)。
 
 这些结果证明了人工智能文本检测器的基本局限性，无论是否使用水印方案。在附录3.2中，我们给出了**定理1**中界的紧密性分析，其中我们证明了对于任何人类分布$\mathcal{H}$，存在一个AI分布和一个检测器$D$，对于该分布，界是相等的。
 
@@ -112,8 +114,8 @@ lang: zh
 
 式中$c \in \mathbb{R}$，设$\Omega_{\mathcal{H}}(0)$不为空。现在，考虑一个密度函数为$pdf_{\mathcal{M}}$的分布$M$，它具有以下性质:
 
-1. 从$\mathcal{M}$抽取的序列落在$\Omega_{\mathcal{H}}(0)$中的概率为$TV(\mathcal{M}, \mathcal{H})$，即：$\mathbb{P}_{s \thicksim \mathcal{M}}[s \in \Omega_{\mathcal{H}}(0)] = TV(\mathcal{M}, \mathcal{H})$
-2. 对于所有$s \in \Omega(\tau) - \Omega(0)$且$\tau > 0$，令$pdf_{\mathcal{M}}(s) = pdf_{\mathcal{H}}(s)$，使得$\mathbb{P}_{s \thicksim \mathcal{H}}[s \in \Omega(\tau)] = 1-TV(\mathcal{M}, \mathcal{H})$
+1. 从$\mathcal{M}$抽取的序列落在$\Omega_{\mathcal{H}}(0)$中的概率为$TV(\mathcal{M}, \mathcal{H})$，即：$\mathbb{P}_{s \thicksim \mathcal{M}}[s \in \Omega_{\mathcal{H}}(0)] = TV(\mathcal{M, H})$
+2. 对于所有$s \in \Omega(\tau) - \Omega(0)$且$\tau > 0$，令$pdf_{\mathcal{M}}(s) = pdf_{\mathcal{H}}(s)$，使得$\mathbb{P}_{s \thicksim \mathcal{H}}[s \in \Omega(\tau)] = 1-TV(\mathcal{M, H})$
 3. 对于所有$s \in \Omega - \Omega(\tau)$，有$pdf_{\mathcal{M}}(s)=0$
 
 定义一个假设的检测器$D$，将$\Omega$中的每个序列映射到$\mathcal{H}$的概率密度函数的负值，即$D(s) = - pdf_{\mathcal{H}}(s)$。利用$TPR_{\gamma}$和$FPR_{\gamma}$的定义，我们有:
@@ -150,11 +152,13 @@ lang: zh
 
 这一项比边界中的任何一项都小几个数量级，可以安全地忽略。例如，对于正整数$t$，常用的伪随机发生器可以实现$\epsilon$，它受限于一个可以忽略不计的函数$1/b^t$，其中$b$是发生器种子中使用的比特数**[37,38]**。从计算的角度来看，伪随机分布的总变异与人工智能生成的真正随机分布几乎相同。因此，我们的框架为现实世界的LLMs提供了一个合理的近似值，即使在存在伪随机性的情况下，不可能结果也成立。
 
-**计算总变异距离**：正如两个概率分布之间的总变异距离$TV$被定义为两个分布分配给任意$\left\{0,1\right\}$-函数的概率之差，我们为多项式时间可计算函数定义了这个距离$TV_c$的计算版本：
+**计算总变异距离**：正如两个概率分布之间的总变异距离$TV$被定义为两个分布分配给任意{0,1}-函数的概率之差，我们为多项式时间可计算函数定义了这个距离$TV_c$的计算版本：
 
 ![image-20230731122117728](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230731122117728.png)
 
-其中$\mathcal{P}$表示多项式时间可计算$\left\{0,1\right\}$-函数的集合。$\mathcal{P}$也可以定义为所有 polynomial-size circuits的集合，这更适合于基于深度神经网络的检测器。函数$f$可以认为是检测参数大于某一阈值的指示函数，即**定理1**证明中的$D(s)≥γ$。以下引理适用于多项式时间检测器$D$的性能:
+其中$\mathcal{P}$表示多项式时间可计算{0,1}-函数的集合。$\mathcal{P}$也可以定义为所有 polynomial-size circuits的集合，这更适合于基于深度神经网络的检测器。函数$f$可以认为是检测参数大于某一阈值的指示函数，即**定理1**证明中的$D(s)≥γ$。以下引理适用于多项式时间检测器$D$的性能:
+
+<!--引理是数学中为了取得某个更好的结论而作为步骤的已证明命题-->
 
 **引理1**，任意多项式时间可计算检测器$D$的ROC下的面积有界为：
 
@@ -180,6 +184,8 @@ lang: zh
 
 ### 4 Estimating Total Variation between Human and AI Text Distributions
 
+<!--这一节在讲怎么求TV-->
+
 我们估计了人类文本分布(WebText)和OpenAI GPT-2系列中几个模型的输出分布之间的总变化($TV$)对于两个分布$\mathcal{H}$和$\mathcal{M}$，它们之间的总变异定义为它们在样本空间$Ω$上对任意事件$E$分配的概率之差的最大值，即:
 
 ![image-20230731123308529](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230731123308529.png)
@@ -190,11 +196,13 @@ lang: zh
 
 **图8**绘制了使用RoBERTa-large架构估计的四种不同文本序列长度(25、50、75和100)的四种GPT-2模型(小、中、大和XL)的总变化估计。我们为每个GPT-2模型和序列长度训练该架构的单独实例，以估计相应分布的总变化。我们观察到，随着模型变得更大更复杂，人类和人工智能文本分布之间的电视估计减少。这表明，随着语言模型变得越来越强大，它们的输出分布与人类生成的文本分布之间的统计差异消失了。
 
+<!--就是，模型越大，总差异就越小，越难检测；序列越长，总差异越大，越容易检测-->
+
 ![image-20230731125244024](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230731125244024.png)
 
 #### 4.1 Estimating Total Variation for GPT-3 Models
 
-我们使用OpenAI平台上的GPT-3系列模型Ada、Babbage和Curie重复上述实验我们使用WebText和ArXiv摘要[39]数据集作为人类文本分布。在以上三个模型中，Ada在文本生成能力方面是最不强大的，而Curie是最强大的。由于这些模型的输出没有免费可用的数据集，因此我们使用OpenAI的API服务来生成所需的数据集。
+我们使用OpenAI平台上的GPT-3系列模型Ada、Babbage和Curie重复上述实验，我们使用WebText和ArXiv摘要[39]数据集作为人类文本分布。在以上三个模型中，Ada在文本生成能力方面是最不强大的，而Curie是最强大的。由于这些模型的输出没有免费可用的数据集，因此我们使用OpenAI的API服务来生成所需的数据集。
 
 我们将WebText中的每个人类文本序列拆分为“prompt”和“completion”，其中prompt包含原始序列的前100个标记，completion包含其余的标记。然后，我们在OpenAI API中使用温度设置为0.4的GPT-3模型使用提示生成完井。我们使用这些模型补全和人类文本序列的“补全”部分，以与第4节相同的方式使用RoBERTa-large模型来估计总变化。使用人类序列的前100个标记作为提示，允许我们控制生成文本的上下文。这使我们能够在相同的上下文中比较生成的文本与人类文本的相似性。
 
@@ -202,9 +210,11 @@ lang: zh
 
 考虑到WebText包含来自广泛的Internet数据源的数据，我们还尝试了更集中的场景，例如为科学文献生成内容。我们使用ArXiv抽象数据集作为人类文本，并估计上述三种模型的总变化(**图9b**)。我们观察到，对于大多数序列长度，总变异在Ada、Babbage和Curie系列模型中减小。这进一步证明，随着语言模型能力的提高，它们的输出与人类文本越来越难以区分，这使得它们更难被检测到。
 
+<!--虽然你这么说，但是这些总差值都挺高的，说明这些文本还是很好检测的才对-->
+
 ![image-20230731125511682](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230731125511682.png)
 
-
+<!--如果要用白盒的方式，是不是就不太需要考虑TV的问题，但是要小心恶意利用-->
 
 ### 5 Spoofing Attacks on AI-text Generative Models
 
