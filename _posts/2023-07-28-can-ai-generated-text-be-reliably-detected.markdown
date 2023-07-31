@@ -50,11 +50,13 @@ lang: zh
 
 ![image-20230731093354688](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230731093354688.png)
 
-> TPR，将机器生成文本判断为机器生成文本，真阳；FPR，将人类样本判断为机器生成文本，假阳
+<!--TPR，将机器生成文本判断为机器生成文本，真阳；FPR，将人类样本判断为机器生成文本，假阳-->
 
 其中 $\gamma$ 是某个分类器参数。我们可以通过$\mathcal{M}$和$\mathcal{H}$之间的总变化来限定$TPR_{\gamma}$和$FPR_{\gamma}$之间的差异：
 
 ![image-20230731093410584](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230731093410584.png)
+
+<!--因为真阳率和假阳率的差值反映了是否容易区分两类文本，所以可以用来近似分布的差异距离TV？这个是否等价很关键！-->
 
 由于$TPR_{\gamma}$也受$1$限制，则：
 
@@ -70,9 +72,9 @@ lang: zh
 
 #### 3.1 Paraphrasing to Evade Detection
 
-> 推论是由定理推断出来的
+<!--推论是由定理推断出来的-->
 
-虽然我们的分析考虑了所有人类和一般语言模型生成的文本，但通过适当地定义$\mathcal{M}$和$\mathcal{H}$，它也可以应用于特定的场景，例如特定的写作风格或句子释义。例如，它可以用来证明人工智能生成的文本，即使带有水印，也可以通过简单地将其传递给释义工具而难以检测。考虑一个意译器，它将AI模型生成的序列作为输入，并产生具有类似含义的类似人类的序列。设$\mathcal{M}=\mathcal{R}_{\mathcal{M}}(s)$和$\mathcal{H}=\mathcal{R}_{\mathcal{H}}(s)$分别为释义器和人类产生的与$s$意义相近的序列的分布。释义器的目标是使其分布$\mathcal{R}_{\mathcal{M}}(s)$尽可能地与人类分布$\mathcal{R}_{\mathcal{H}}(s)$相似，从本质上减少它们之间的总变化距离。定理$1$为检测器$D$的性能设定了以下界限，检测器$D$试图从人类产生的序列中检测释义器的输出。
+虽然我们的分析考虑了所有人类和一般语言模型生成的文本，但通过适当地定义$\mathcal{M}$和$\mathcal{H}$，它也可以应用于特定的场景，例如特定的写作风格或句子释义。例如，它可以用来证明人工智能生成的文本，即使带有水印，也可以通过简单地将其传递给释义工具而难以检测。考虑一个释义器，它将AI模型生成的序列作为输入，并产生具有类似含义的类人类的序列。设$\mathcal{M}=\mathcal{R}_{\mathcal{M}}(s)$和$\mathcal{H}=\mathcal{R}_{\mathcal{H}}(s)$分别为释义器和人类产生的与$s$意义相近的序列的分布。释义器的目标是使其分布$\mathcal{R}_{\mathcal{M}}(s)$尽可能地与人类分布$\mathcal{R}_{\mathcal{H}}(s)$相似，从本质上减少它们之间的总变化距离。**定理1**为检测器$D$的性能设定了以下界限，检测器$D$试图从人类产生的序列中检测释义器的输出。
 
 **推论1**，检测器$D$的ROC下的面积为：
 
@@ -86,7 +88,7 @@ lang: zh
 
 其中$\mathcal{R}_{\mathcal{M}}(s)$和$\mathcal{R}_{\mathcal{H}}(s)$分别是由释义模型和人类产生的$s$的复述序列的分布。
 
-人类可能有不同的写作风格。**推论2**表明，如果复述模型类似于某些人类文本分布$H$(即$TV(\mathcal{R}_{\mathcal{M}}(s), \mathcal{R}_{\mathcal{H}}(s))$较小)，则某些人的写作将被错误地检测为水印(即$Pr_{s_w} \thicksim \mathcal{R}_{\mathcal{H}}(s) [s_w使用W进行水印]$的值高)，或者复述模型可以去除水印(即$Pr_{s_w} \thicksim \mathcal{R}_{\mathcal{M}}(s) [s_w使用W进行水印]$的值低)。
+人类可能有不同的写作风格。**推论2**表明，如果复述模型类似于某些人类文本分布$\mathcal{H}$(即$TV(\mathcal{R}_{\mathcal{M}}(s), \mathcal{R}_{\mathcal{H}}(s))$较小)，则某些人的写作将被错误地检测为水印(即$Pr_{s_w} \thicksim \mathcal{R}_{\mathcal{H}}(s) [s_w使用W进行水印]$的值高)，或者复述模型可以去除水印(即$Pr_{s_w} \thicksim \mathcal{R}_{\mathcal{M}}(s) [s_w使用W进行水印]$的值低)。
 
 **推论3**，对于任意 AI文本检测器$D$，
 
@@ -100,7 +102,9 @@ lang: zh
 
 #### 3.2 Tightness Analysis
 
-在本节中，我们证明**定理1**中的界是紧的。对于任意两个分布$\mathcal{H}$和$\mathcal{M}$，例如，在一维中移动了一段距离的两个相同的正态分布，这个界不必是紧的。然而，对于每个人类分布$\mathcal{H}$，紧密性都可以表现出来。对于人类生成的文本序列H的给定分布，我们构建了一个人工智能文本分布M和一个检测器$D$，使得边界相等。
+<!--讨论紧性，主要是为了拿最大最小值，证明有界吧-->
+
+本节中，我们证明**定理1**中的界是紧的。对于任意两个分布$\mathcal{H}$和$\mathcal{M}$，例如，在一维中移动了一段距离的两个相同的正态分布，这个界不必是紧的。然而，对于每个人类分布$\mathcal{H}$，紧密性都可以表现出来。对于人类生成的文本序列$\mathcal{H}$的给定分布，我们构建了一个人工智能文本分布$\mathcal{M}$和一个检测器$D$，使得边界相等。
 
 定义人工生成文本$pdf_{\mathcal{H}}$在所有序列$\Omega$上分布的概率密度函数的子水平集如下：
 
@@ -110,7 +114,7 @@ lang: zh
 
 1. 从$\mathcal{M}$抽取的序列落在$\Omega_{\mathcal{H}}(0)$中的概率为$TV(\mathcal{M}, \mathcal{H})$，即：$\mathbb{P}_{s \thicksim \mathcal{M}}[s \in \Omega_{\mathcal{H}}(0)] = TV(\mathcal{M}, \mathcal{H})$
 2. 对于所有$s \in \Omega(\tau) - \Omega(0)$且$\tau > 0$，令$pdf_{\mathcal{M}}(s) = pdf_{\mathcal{H}}(s)$，使得$\mathbb{P}_{s \thicksim \mathcal{H}}[s \in \Omega(\tau)] = 1-TV(\mathcal{M}, \mathcal{H})$
-3. 对于所有$s \in \Omega - \Omega(\tau)$，令$pdf_{\mathcal{M}}(s)=0$
+3. 对于所有$s \in \Omega - \Omega(\tau)$，有$pdf_{\mathcal{M}}(s)=0$
 
 定义一个假设的检测器$D$，将$\Omega$中的每个序列映射到$\mathcal{H}$的概率密度函数的负值，即$D(s) = - pdf_{\mathcal{H}}(s)$。利用$TPR_{\gamma}$和$FPR_{\gamma}$的定义，我们有:
 
