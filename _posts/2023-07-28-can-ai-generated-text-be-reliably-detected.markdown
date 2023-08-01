@@ -30,6 +30,49 @@ lang: zh
 
 
 
+### 2 Evading AI-Detectors using Paraphrasing Attacks
+
+
+
+#### 2.1 Paraphrasing Attacks on Watermarked AI-generated Text
+
+<!--怎么保证改写过程水印没有被怕破坏？还是说破坏不破坏都无所谓，因为都是模型输出？-->
+
+这边针对 [Green List](https://arxiv.org/pdf/2301.10226.pdf) 那篇水印文章进行改写攻击，攻击目标是从LLM的输出中删除水印签名。
+
+- 用来生成水印的模型是OPT-1.3B**[8]**，并使用大量数据上训练，做文本补全任务。（数据集？？
+- 改写攻击模型有两个，一个是 T5-based**[9]** paraphrasing model**[32]**（222M参数量），另一个是 PEGASUS-based**[31]** paraphrasing model（[568M参数量](https://huggingface.co/tuner007/pegasus_paraphrase)）。都只针对释义任务进行微调。（数据集？？
+- 使用 Extreme Summarization (XSum) **[35]** 数据集的（某？）100个段落进行评估
+
+**攻击过程**：
+
+- OPT-1.3B会生成一部分带水印的文本，然后改写模型逐句接收这些带水印的LLM文本并输出改写后的LLM文本
+- Xsum的文本也会输入OPT-1.3B 来得到另一部分带水印的文本
+
+**结果**：
+
+<!--困惑度就是模型对文本的熟悉程度，如果是与训练集分布相近，那么困惑度就低-->
+
+- **Table1**：PEGASUS-based paraphraser将水印文本中绿色列表标记的百分比从58%（改写前）降低到44%（改写后），检测器的准确率从97%下降到80%，而困惑分数仅为3.5
+
+  ![image-20230801140618317](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230801140618317.png)
+
+- **Table2**：展示了改写前后OPT-1.3B输出的带水印文本。这边使用 T5-based paraphraser[32]的目的是要说明，即使是naïve的改写模型也可以将检测器的准确率从97%降至57%
+
+  ![image-20230801134742845](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230801134742845.png)
+
+- **Figure2**：显示了检测精度和 T5-based paraphraser 输出文本质量（使用困惑分数测量）之间的权衡。然而，必须指出，困惑度只是评估文本质量的代理指标，因为它的计算依赖于另一个LLM。这里使用更大的 OPT-2.7B**[8]** 来计算困惑度分数
+
+- **Figure3**：使用 DIPPER**[4]** 进行递归改写攻击。DIPPER将$S$修改为$f(S)$，其中$f$是DIPPER paraphraser。$ppi$指的是第$i$次递归改写。例如，用$f$表示$S$的$pp3$得到$f(f(f(S)))$
+
+  ![image-20230801140831362](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230801140831362.png)
+
+- **Table3**：展示了一个 recursively paraphrasing 的样例。在递归改写攻击中，本文使用来自XSum的100个人工书写段落和100个带水印的XSum补全段落来评估ROC曲线。在假阳性率为1%的情况下，经过五轮递归释义后，水印模型的真阳性率从99%（no attack）下降到15% （pp5）。检测器的AUROC由99.8%下降到67.9%
+
+![image-20230801140902811](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230801140902811.png)
+
+
+
 ### 3 Impossibility Results  for Reliable Detection of AI-Generated Text
 
 <!--这一节从各种角度证明AUROC是有界的，且不论什么条件下计算公式都是定理1，其实最根本还是想说明，只有在AI生成的样本和人的样本分布差异较大时，才能够检测出来，而现在AI生成内容的分布和人类越来越接近，检测器基本接近随机猜测，也就是会逐渐失效，所以至少我觉得有监督训练的黑盒方式就不要考虑了。不过TV的求解我还是不太理解？？-->
@@ -40,7 +83,7 @@ lang: zh
 
 **Metrics**：检测器的ROC曲线下面积的上界表示 AI 和人类生成文本的分布之间的总变异距离，随着距离减小，AUROC界限接近1/2，相当于随机分类。
 
-**定义**：$\mathcal{H}$ 是人类生成的文本的分布，$\mathcal{M}$是AI生成的文本的分布，$\Omega$是所有可能文本序列的集合；$TV(\mathcal{M}, \mathcal{H})$ 表示两种分布之间的总变异距离；$D:\Omega \to \mathbb{R}$ 是表示detector的function，将文本映射成分值，然后用阈值 $\gamma$ 来分类；通过调整 $\gamma$ 来调整检测器对文本的敏感程度，得到ROC曲线
+**定义**：$\mathcal{H}$ 是人类生成的文本的分布，$\mathcal{M}$是AI生成的文本的分布，$\Omega$是所有可能文本序列的集合；$TV(\mathcal{M, H})$ 表示两种分布之间的总变异距离；$D:\Omega \to \mathbb{R}$ 是表示detector的function，将文本映射成分值，然后用阈值 $\gamma$ 来分类；通过调整 $\gamma$ 来调整检测器对文本的敏感程度，得到ROC曲线
 
 
 
@@ -64,7 +107,7 @@ lang: zh
 
 ![image-20230731094356389](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230731094356389.png)
 
-为简洁起见，用$x$, $y$和$tv$表示$FPR_{\gamma}$， $TPR_{\gamma}$和$TV(\mathcal{M}, \mathcal{H})$，则 AUROC 计算如下：
+为简洁起见，用$x$, $y$和$tv$表示$FPR_{\gamma}$， $TPR_{\gamma}$和$TV(\mathcal{M, H})$，则 AUROC 计算如下：
 
 ![image-20230731094614225](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230731094614225.png)
 
@@ -114,7 +157,7 @@ lang: zh
 
 式中$c \in \mathbb{R}$，设$\Omega_{\mathcal{H}}(0)$不为空。现在，考虑一个密度函数为$pdf_{\mathcal{M}}$的分布$M$，它具有以下性质:
 
-1. 从$\mathcal{M}$抽取的序列落在$\Omega_{\mathcal{H}}(0)$中的概率为$TV(\mathcal{M}, \mathcal{H})$，即：$\mathbb{P}_{s \thicksim \mathcal{M}}[s \in \Omega_{\mathcal{H}}(0)] = TV(\mathcal{M, H})$
+1. 从$\mathcal{M}$抽取的序列落在$\Omega_{\mathcal{H}}(0)$中的概率为$TV(\mathcal{M}, \mathcal{H})$，即：$\mathbb{P_s \thicksim \mathcal{M}}[s \in \Omega_{\mathcal{H}}(0)] = TV(\mathcal{M, H})$
 2. 对于所有$s \in \Omega(\tau) - \Omega(0)$且$\tau > 0$，令$pdf_{\mathcal{M}}(s) = pdf_{\mathcal{H}}(s)$，使得$\mathbb{P}_{s \thicksim \mathcal{H}}[s \in \Omega(\tau)] = 1-TV(\mathcal{M, H})$
 3. 对于所有$s \in \Omega - \Omega(\tau)$，有$pdf_{\mathcal{M}}(s)=0$
 
@@ -218,3 +261,14 @@ lang: zh
 
 ### 5 Spoofing Attacks on AI-text Generative Models
 
+#### 5.1 Spoofing Attacks on Watermarked Models
+
+在Kirchenbauer等人**[1]**中，他们通过断言模型输出具有某些特定模式的token来为LLM输出加水印，这些模式可以很容易地以极低的错误率检测到。软水印文本主要由 green list tokens 组成。如果攻击者能够了解软水印方案的 green list，他们就可以使用这些信息对人工编写文本进行处理使其被检测为带水印文本。实验表明，该软水印方案可以有效地欺骗。虽然软水印检测器可以非常准确地检测到水印的存在，但无法确定该模式是由人类还是LLM生成的。攻击者可以以这种方式编写贬损的带水印文本，这些文本被检测到是带水印的，这可能会对带水印的LLM的开发人员造成声誉损害。因此，研究欺骗攻击以避免此类情况的发生是非常重要的。
+
+在水印中，前缀单词$s ^{(t−1)}$决定了用于选择单词$s ^{(t)}$的 green list。攻击者的目标是为词汇表中$N$个最常用的单词计算 green list 的代理。我们在实验中使用$N = 181$，这是一个相对较小的值。攻击者查询带水印的OPT-1.3B**[8]** 106次，观察其输出中成对出现的token，以估计$N$个 tokens 的 green list score。前缀$s ^{(t)}$的 green list score 较高的 token 可能位于其 green list 中（参见**图10**）。我们建立了一个工具，通过向攻击者提供代理 green list 来帮助他们创建带水印的句子。通过这种方式，我们可以很容易地欺骗水印模型。如**表5**所示，是由一个敌对的人类创造的句子。**图11**显示，在 paraphrasing and spoofing 攻击的情况下，基于水印的检测器的性能显著下降，表明它们不可靠
+
+![image-20230801144104669](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230801144104669.png)
+
+![image-20230801144205986](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230801144205986.png)
+
+![image-20230801143248755](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230801143248755.png)
