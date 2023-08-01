@@ -36,38 +36,38 @@ lang: zh
 
 #### 2.1 Paraphrasing Attacks on Watermarked AI-generated Text
 
-<!--怎么保证改写过程水印没有被怕破坏？还是说破坏不破坏都无所谓，因为都是模型输出？-->
+<!--怎么保证转述过程水印没有被怕破坏？还是说破坏不破坏都无所谓，因为都是模型输出？-->
 
-这边针对 [Green List](https://arxiv.org/pdf/2301.10226.pdf) 那篇水印文章进行改写攻击，攻击目标是从LLM的输出中删除水印签名。
+这边针对 [Green List](https://arxiv.org/pdf/2301.10226.pdf) 那篇水印文章进行转述攻击，攻击目标是从LLM的输出中删除水印签名。
 
 - 用来生成水印的模型是OPT-1.3B**[8]**，并使用大量数据上训练，做文本补全任务。（数据集？？
-- 改写攻击模型有两个，一个是 T5-based**[9]** paraphrasing model**[32]**（222M参数量），另一个是 PEGASUS-based**[31]** paraphrasing model（[568M参数量](https://huggingface.co/tuner007/pegasus_paraphrase)）。都只针对释义任务进行微调。（数据集？？
+- 转述攻击模型有两个，一个是 T5-based**[9]** paraphrasing model**[32]**（222M参数量），另一个是 PEGASUS-based**[31]** paraphrasing model（[568M参数量](https://huggingface.co/tuner007/pegasus_paraphrase)）。都只针对释义任务进行微调。（数据集？？
 - 使用 Extreme Summarization (XSum) **[35]** 数据集的（某？）100个段落进行评估
 
 **攻击过程**：
 
-- OPT-1.3B会生成一部分带水印的文本，然后改写模型逐句接收这些带水印的LLM文本并输出改写后的LLM文本
+- OPT-1.3B会生成一部分带水印的文本，然后转述模型逐句接收这些带水印的LLM文本并输出转述后的LLM文本
 - Xsum的文本也会输入OPT-1.3B 来得到另一部分带水印的文本
 
 **结果**：
 
 <!--困惑度就是模型对文本的熟悉程度，如果是与训练集分布相近，那么困惑度就低-->
 
-- **Table1**：PEGASUS-based paraphraser将水印文本中绿色列表标记的百分比从58%（改写前）降低到44%（改写后），检测器的准确率从97%下降到80%，而困惑分数仅为3.5
+- **Table1**：PEGASUS-based paraphraser将水印文本中绿色列表标记的百分比从58%（转述前）降低到44%（转述后），检测器的准确率从97%下降到80%，而困惑分数仅为3.5
 
   ![image-20230801140618317](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230801140618317.png)
 
-- **Table2**：展示了改写前后OPT-1.3B输出的带水印文本。这边使用 T5-based paraphraser[32]的目的是要说明，即使是naïve的改写模型也可以将检测器的准确率从97%降至57%
+- **Table2**：展示了转述前后OPT-1.3B输出的带水印文本。这边使用 T5-based paraphraser[32]的目的是要说明，即使是naïve的转述模型也可以将检测器的准确率从97%降至57%
 
   ![image-20230801134742845](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230801134742845.png)
 
 - **Figure2**：显示了检测精度和 T5-based paraphraser 输出文本质量（使用困惑分数测量）之间的权衡。然而，必须指出，困惑度只是评估文本质量的代理指标，因为它的计算依赖于另一个LLM。这里使用更大的 OPT-2.7B**[8]** 来计算困惑度分数
 
-- **Figure3**：使用 DIPPER**[4]** 进行递归改写攻击。DIPPER将$S$修改为$f(S)$，其中$f$是DIPPER paraphraser。$ppi$指的是第$i$次递归改写。例如，用$f$表示$S$的$pp3$得到$f(f(f(S)))$
+- **Figure3**：使用 DIPPER**[4]** 进行递归转述攻击。DIPPER将$S$修改为$f(S)$，其中$f$是DIPPER paraphraser。$ppi$指的是第$i$次递归转述。例如，用$f$表示$S$的$pp3$得到$f(f(f(S)))$
 
   ![image-20230801140831362](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230801140831362.png)
 
-- **Table3**：展示了一个 recursively paraphrasing 的样例。在递归改写攻击中，本文使用来自XSum的100个人工书写段落和100个带水印的XSum补全段落来评估ROC曲线。在假阳性率为1%的情况下，经过五轮递归释义后，水印模型的真阳性率从99%（no attack）下降到15% （pp5）。检测器的AUROC由99.8%下降到67.9%
+- **Table3**：展示了一个 recursively paraphrasing 的样例。在递归转述攻击中，本文使用来自XSum的100个人工书写段落和100个带水印的XSum补全段落来评估ROC曲线。在假阳性率为1%的情况下，经过五轮递归释义后，水印模型的真阳性率从99%（no attack）下降到15% （pp5）。检测器的AUROC由99.8%下降到67.9%
 
 ![image-20230801140902811](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230801140902811.png)
 
