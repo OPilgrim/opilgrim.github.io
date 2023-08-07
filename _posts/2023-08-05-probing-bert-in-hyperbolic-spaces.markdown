@@ -44,7 +44,7 @@ lang: zh
 
 ### 3 POINCARE´ PROBE
 
-我们从回顾双曲几何的基础知识开始。我们遵循 Ganea et al. (2018)。广义庞加莱球是双曲空间的典型模型，表示为$(\mathbb{D}^n_c, g^{\mathbb{D}}_x)$，对于$c>0$，$\mathbb{D}^n_c=\{x \in \mathbb{R}^n | c \|x\|^2 < 1\}$是一个黎曼流形，$g^{\mathbb{D}}_x=(λ^c_x)^2 I_n$是度规张量，$λ^c_x=2/(1-c \|x\|^2)$是保形因子，$c$是双曲空间的负曲率。我们将根据上下文交替使用术语双曲和庞加莱。我们的庞加莱探针使用标准的庞加莱球$\mathbb{D}^n_c$ with $c=1$。$x,y \in \mathbb{D}^n_c$的距离公式为：
+我们从回顾双曲几何的基础知识开始。我们遵循 Ganea et al. (2018)。广义庞加莱球是双曲空间的典型模型，表示为$(\mathbb{D}^n_c, g^{\mathbb{D}}_x)$，对于$c>0$，$\mathbb{D}^n_c=\{x \in \mathbb{R}^n \mid c \parallel x \parallel ^2 < 1\}$是一个黎曼流形，$g^{\mathbb{D}}_x=(λ^c_x)^2 I_n$是度规张量，$λ^c_x=2/(1-c \parallel x \parallel ^2)$是保形因子，$c$是双曲空间的负曲率。我们将根据上下文交替使用术语双曲和庞加莱。我们的庞加莱探针使用标准的庞加莱球$\mathbb{D}^n_c$ with $c=1$。$x,y \in \mathbb{D}^n_c$的距离公式为：
 
 ![image-20230805162353382](https://cdn.jsdelivr.net/gh/OPilgrim/Typoter-TC/img/image-20230805162353382.png)
 
